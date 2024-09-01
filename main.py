@@ -20,6 +20,10 @@ app.add_middleware(
 class CodeExecutionRequest(BaseModel):
     code: str
 
+@app.get("/ping")
+async def ping():
+    return "pong"
+
 @app.post("/execute")
 async def execute_code(request: CodeExecutionRequest):
     try: 
