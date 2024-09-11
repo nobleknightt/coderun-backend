@@ -6,6 +6,8 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
+from utils import get_suggestion
+
 
 app = FastAPI()
 
@@ -17,16 +19,19 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 class CodeExecutionRequest(BaseModel):
     code: str
+
 
 @app.get("/ping")
 async def ping():
     return "pong"
 
+
 @app.post("/execute")
 async def execute_code(request: CodeExecutionRequest):
-    try: 
+    try:
         with tempfile.NamedTemporaryFile(suffix=".py", mode="w", delete=False) as temp_file:
             temp_file.write(request.code)
             source_file = temp_file.name
@@ -36,13 +41,14 @@ async def execute_code(request: CodeExecutionRequest):
         )
 
         if result.returncode == 0:
-            return {"output": result.stdout}
+            return {"output": result.stdout, "suggestion": ""}
         else:
-            return {"output": result.stderr}
+            suggestion = get_suggestion(request.code, result.stderr)
+            return {"output": result.stderr, "suggestion": suggestion}
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-    
+
     finally:
         if source_file:
             os.remove(source_file)
