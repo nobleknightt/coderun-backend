@@ -1,0 +1,7 @@
+services:
+  cplusplus-coderun:
+    build: .
+    image: nobleknight/cplusplus-coderun:1.0
+    ports:
+      - "8000:8000"
+  
