@@ -6,4 +6,4 @@
 - [ ] Java
 - [x] C/C++
 - [x] Golang
-- [ ] Rust
+- [x] Rust
