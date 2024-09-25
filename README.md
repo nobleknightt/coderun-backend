@@ -5,5 +5,5 @@
 - [ ] JavaScript
 - [ ] Java
 - [x] C/C++
-- [ ] Golang
+- [x] Golang
 - [ ] Rust

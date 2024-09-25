@@ -1,0 +1,7 @@
+services:
+  go-coderun:
+    build: .
+    image: nobleknight/go-coderun:1.0
+    ports:
+      - "8000:8000"
+  
