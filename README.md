@@ -4,6 +4,6 @@
 - [x] Python
 - [ ] JavaScript
 - [ ] Java
-- [ ] C/C++
+- [x] C/C++
 - [ ] Golang
 - [ ] Rust
