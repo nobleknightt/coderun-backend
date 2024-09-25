@@ -5,7 +5,7 @@ RUN apt-get -y update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-WORKDIR /cplusplus-coderun
+WORKDIR /cpp-coderun
 
 COPY main.py .
 COPY requirements.txt .

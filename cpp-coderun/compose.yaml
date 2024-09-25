@@ -1,0 +1,7 @@
+services:
+  cpp-coderun:
+    build: .
+    image: nobleknight/cpp-coderun:1.0
+    ports:
+      - "8000:8000"
+  
