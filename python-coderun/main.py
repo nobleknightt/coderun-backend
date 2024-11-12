@@ -6,9 +6,6 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-from utils import get_suggestion
-
-
 app = FastAPI()
 
 app.add_middleware(
@@ -32,19 +29,23 @@ async def ping():
 @app.post("/execute")
 async def execute_code(request: CodeExecutionRequest):
     try:
-        with tempfile.NamedTemporaryFile(suffix=".py", mode="w", delete=False) as temp_file:
+        with tempfile.NamedTemporaryFile(
+            suffix=".py", mode="w", delete=False
+        ) as temp_file:
             temp_file.write(request.code)
             source_file = temp_file.name
 
         result = subprocess.run(
-            ["python", source_file], capture_output=True, text=True
+            ["python", source_file], capture_output=True, text=True, timeout=5
         )
 
-        if result.returncode == 0:
-            return {"output": result.stdout, "suggestion": ""}
-        else:
-            suggestion = get_suggestion(request.code, result.stderr)
-            return {"output": result.stderr, "suggestion": suggestion}
+        if result.returncode != 0:
+            return {"stderr": result.stderr}
+
+        return {"stdout": result.stdout}
+
+    except subprocess.TimeoutExpired:
+        return {"toast": "Programs are allowed to run for a maximum of 5 seconds."}
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
