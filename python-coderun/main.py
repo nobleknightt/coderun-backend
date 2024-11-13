@@ -40,12 +40,12 @@ async def execute_code(request: CodeExecutionRequest):
         )
 
         if result.returncode != 0:
-            return {"stderr": result.stderr}
+            return {"stdout": "", "stderr": result.stderr, "toast": ""}
 
-        return {"stdout": result.stdout}
+        return {"stdout": result.stdout, "stderr": "", "toast": ""}
 
     except subprocess.TimeoutExpired:
-        return {"toast": "Programs are allowed to run for a maximum of 5 seconds."}
+        return {"stdout": "", "stderr": "", "toast": "Programs are allowed to run for a maximum of 5 seconds."}
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
