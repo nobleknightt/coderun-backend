@@ -2,7 +2,7 @@
 
 ## Todo
 - [x] Python
-- [ ] JavaScript
+- [x] JavaScript
 - [ ] Java
 - [x] C/C++
 - [x] Golang

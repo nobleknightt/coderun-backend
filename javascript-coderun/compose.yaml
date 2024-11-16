@@ -1,0 +1,6 @@
+services:
+  javascript-coderun:
+    build: .
+    image: nobleknight/javascript-coderun:1.0
+    ports:
+      - "8000:8000"

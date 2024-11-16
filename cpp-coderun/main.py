@@ -17,7 +17,8 @@ app.add_middleware(
 )
 
 class CodeExecutionRequest(BaseModel):
-    code: str
+    source: str
+    stdin: str
 
 @app.get("/ping")
 async def ping():
@@ -29,7 +30,7 @@ async def execute_code(request: CodeExecutionRequest):
     exe_file = None
     try:
         with tempfile.NamedTemporaryFile(suffix=".cpp", mode="w", delete=False) as temp_source_file:
-            temp_source_file.write(request.code)
+            temp_source_file.write(request.source)
             source_file = temp_source_file.name
         
         source_path = Path(source_file)
@@ -40,16 +41,19 @@ async def execute_code(request: CodeExecutionRequest):
         )
         
         if compilation_result.returncode != 0:
-            return {"output": compilation_result.stderr, "suggestion": ""}
+            return {"stdout": "", "stderr": compilation_result.stderr, "toast": ""}
         
         execution_result = subprocess.run(
-            [str(exe_file)], capture_output=True, text=True
+            [str(exe_file)], input=request.stdin, capture_output=True, text=True, timeout=5,
         )
         
         if execution_result.returncode != 0:
-            return {"output": execution_result.stderr, "suggestion": ""}
+            return {"stdout": "", "stderr": execution_result.stderr, "toast": ""}
 
-        return {"output": execution_result.stdout, "suggestion": ""}
+        return {"stdout": execution_result.stdout, "stderr": "", "toast": ""}
+
+    except subprocess.TimeoutExpired:
+        return {"stdout": "", "stderr": "", "toast": "Programs are allowed to run for a maximum of 5 seconds."}
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
