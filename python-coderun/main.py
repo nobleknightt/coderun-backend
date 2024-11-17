@@ -38,7 +38,11 @@ async def execute_code(request: CodeExecutionRequest):
             source_file = temp_file.name
 
         result = subprocess.run(
-            ["python", source_file], input=request.stdin, capture_output=True, text=True, timeout=5
+            ["python", source_file],
+            input=request.stdin,
+            capture_output=True,
+            text=True,
+            timeout=5,
         )
 
         if result.returncode != 0:
@@ -47,7 +51,11 @@ async def execute_code(request: CodeExecutionRequest):
         return {"stdout": result.stdout, "stderr": "", "toast": ""}
 
     except subprocess.TimeoutExpired:
-        return {"stdout": "", "stderr": "", "toast": "Programs are allowed to run for a maximum of 5 seconds."}
+        return {
+            "stdout": "",
+            "stderr": "",
+            "toast": "Programs are allowed to run for a maximum of 5 seconds.",
+        }
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
